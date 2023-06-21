@@ -12,6 +12,12 @@ import Crypto.Hash.Algorithms as Hash.Algorithms
 
 -- Here you can add functions which are available in all your controllers
 
+fetchCompanyWithRecords :: (?modelContext :: ModelContext) => Id Company -> IO CompanyWithRecords
+fetchCompanyWithRecords companyId = do
+    company <- fetch companyId
+    uploadedFile <- fetch company.uploadedFileId
+    pure $ CompanyWithRecords { .. }
+
 fetchLandingPageWithRecords :: (?modelContext :: ModelContext) => Id LandingPage -> IO LandingPageWithRecords
 fetchLandingPageWithRecords landingPageId = do
 

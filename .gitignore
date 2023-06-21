@@ -27,6 +27,7 @@ static/articles
 static/paragraph_quotes
 
 Application/Migration
+static/uploaded_files
 
 # JWT
 Config/jwtRS256.key*

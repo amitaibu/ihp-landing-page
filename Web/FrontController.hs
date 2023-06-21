@@ -6,6 +6,7 @@ import Web.View.Layout (defaultLayout)
 
 
 -- Controller Imports
+import Web.Controller.Companies
 import Web.Controller.Users
 import Web.Controller.ImageStyle
 import Web.Controller.LandingPages
@@ -19,6 +20,7 @@ instance FrontController WebApplication where
     controllers =
         [ startPage LandingPagesAction
         -- Generator Marker
+        , parseRoute @CompaniesController
         , parseRoute @UsersController
         , parseRoute @ImageStyleController
         , parseRoute @LandingPagesController

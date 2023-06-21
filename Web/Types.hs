@@ -20,6 +20,16 @@ data LandingPageWithRecords = LandingPageWithRecords
 
 --
 
+data CompanyWithRecords = CompanyWithRecords
+    { company :: !Company
+    , uploadedFile :: !UploadedFile
+    } deriving (Show)
+
+
+instance SetField "uploadedFile" CompanyWithRecords UploadedFile where
+  setField :: UploadedFile -> CompanyWithRecords -> CompanyWithRecords
+  setField uploadedFile record = record { uploadedFile }
+
 data WebApplication = WebApplication deriving (Eq, Show)
 
 data ParagraphQuotesController
@@ -76,4 +86,14 @@ data UsersController
     | EditUserAction { userId :: !(Id User) }
     | UpdateUserAction { userId :: !(Id User) }
     | DeleteUserAction { userId :: !(Id User) }
+    deriving (Eq, Show, Data)
+
+data CompaniesController
+    = CompaniesAction
+    | NewCompanyAction
+    | ShowCompanyAction { companyId :: !(Id Company) }
+    | CreateCompanyAction
+    | EditCompanyAction { companyId :: !(Id Company) }
+    | UpdateCompanyAction { companyId :: !(Id Company) }
+    | DeleteCompanyAction { companyId :: !(Id Company) }
     deriving (Eq, Show, Data)

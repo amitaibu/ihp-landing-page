@@ -40,6 +40,21 @@ CREATE TABLE paragraph_ctas (
 );
 CREATE INDEX paragraph_quotes_landing_page_id_index ON paragraph_quotes (landing_page_id);
 CREATE INDEX paragraph_ctas_landing_page_id_index ON paragraph_ctas (landing_page_id);
+CREATE TABLE uploaded_files (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
+    signed_url TEXT NOT NULL,
+    signed_url_expired_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    path TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    content_type TEXT NOT NULL
+);
+CREATE TABLE companies (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    uploaded_file_id UUID NOT NULL
+);
+CREATE INDEX companies_uploaded_file_id_index ON companies (uploaded_file_id);
+ALTER TABLE companies ADD CONSTRAINT companies_ref_uploaded_file_id FOREIGN KEY (uploaded_file_id) REFERENCES uploaded_files (id) ON DELETE NO ACTION;
 ALTER TABLE paragraph_ctas ADD CONSTRAINT paragraph_ctas_ref_landing_page_id FOREIGN KEY (landing_page_id) REFERENCES landing_pages (id) ON DELETE NO ACTION;
 ALTER TABLE paragraph_ctas ADD CONSTRAINT paragraph_ctas_ref_ref_landing_page_id FOREIGN KEY (ref_landing_page_id) REFERENCES landing_pages (id) ON DELETE NO ACTION;
 ALTER TABLE paragraph_quotes ADD CONSTRAINT paragraph_quotes_ref_landing_page_id FOREIGN KEY (landing_page_id) REFERENCES landing_pages (id) ON DELETE NO ACTION;
