@@ -6,17 +6,24 @@ import Web.Types
 import Web.Element.Types
 import Web.Element.ElementBuild
 import Web.Element.ElementWrap
+import qualified Network.Wai as Wai
+import Web.Controller.Prelude
 
 data ShowView = ShowView { landingPageWithRecords :: LandingPageWithRecords }
 
 instance View ShowView where
     html ShowView { .. } = [hsx|
+
+        <div>action: checkPath $ ShowLandingPageAction landingPage.id</div>
+
         {header}
 
         {orderAndRenderParagraphs landingPageWithRecords }
-
     |]
         where
+            checkPath :: (HasPath controller) => controller -> Bool
+            checkPath action = isActivePath action
+
             landingPage = landingPageWithRecords.landingPage
 
             breadcrumb = renderBreadcrumb

@@ -9,6 +9,8 @@ import Crypto.PubKey.RSA as RSA
 import Control.Exception (catch)
 import qualified Data.ByteString as BS
 import Web.JWT
+import qualified IHP.Log as Log
+import IHP.Log.Types
 
 data RsaKeys = RsaKeys { publicKey :: RSA.PublicKey, privateKey :: RSA.PrivateKey }
 
@@ -20,6 +22,12 @@ config = do
 
     -- Static directory.
     initStaticDirStorage
+
+    logger <- liftIO $ newLogger def {
+      level = Warn,
+      formatter = withTimeFormatter
+      }
+    option logger
 
     -- Private and public keys to sign and verify image style URLs.
     privateKeyContent <- liftIO $ readRsaKeyFromFile "./Config/jwtRS256.key"
