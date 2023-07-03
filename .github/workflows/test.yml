@@ -1,0 +1,47 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Test
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: cachix/install-nix-action@v20
+      with:
+        nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/51bcdc4cdaac48535dabf0ad4642a66774c609ed.tar.gz
+
+    - name: Cachix Init
+      uses: cachix/cachix-action@v12
+      with:
+        name: digitallyinduced
+        skipPush: true
+    # devenv
+    - uses: cachix/cachix-action@v12
+      with:
+        name: devenv
+    - name: Install devenv.sh
+      run: nix profile install github:cachix/devenv/latest
+      shell: sh
+    # direnv
+    - uses: HatsuneMiku3939/direnv-action@v1
+      with:
+        direnvVersion: 2.32.3
+
+    - run: |
+          ssh-keygen -t rsa -b 4096 -m PEM -f ./Config/jwtRS256.key -N "" && openssl rsa -in ./Config/jwtRS256.key -pubout -outform PEM -out ./Config/jwtRS256.key.pub
+          nix-shell --run "devenv up &"
+          nix-shell --run "runghc $(make print-ghc-extensions) -i. -ibuild -iConfig Test/Main.hs"
