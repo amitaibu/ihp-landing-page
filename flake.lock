@@ -209,11 +209,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1698874554,
-        "narHash": "sha256-wnXgBJZPBNYpC8OOXRqEfRMYHHuBx5vwMRGHb33pyas=",
+        "lastModified": 1699152275,
+        "narHash": "sha256-vd89PrM/M0dkHNGLRAnDiN6b4X6PAShVARSpitAnU5E=",
         "owner": "digitallyinduced",
         "repo": "ihp",
-        "rev": "d671818b1ec7f097c3af8b21c358864b5ed2135f",
+        "rev": "dac48f21db16afd5a32a9e54950a4fc12a3146fb",
         "type": "github"
       },
       "original": {
