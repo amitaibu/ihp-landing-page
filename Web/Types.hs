@@ -4,6 +4,22 @@ import IHP.Prelude
 import IHP.ModelSupport
 import Generated.Types
 import IHP.LoginSupport.Types
+import IHP.View.Form
+import Database.PostgreSQL.Simple.ToField
+import Data.ByteString.Builder (byteString, char8)
+
+
+instance ToField (ProjectType, Int) where
+    toField = serializeProjectTypeAndInt
+
+serializeProjectTypeAndInt :: (ProjectType, Int) -> Action
+serializeProjectTypeAndInt (projectType, participants) = Many
+    [ Plain (char8 '(')
+    , toField projectType
+    , Plain (char8 ',')
+    , toField $ show participants
+    , Plain (char8 ')')
+    ]
 
 -- Custom types
 
@@ -77,3 +93,17 @@ data UsersController
     | UpdateUserAction { userId :: !(Id User) }
     | DeleteUserAction { userId :: !(Id User) }
     deriving (Eq, Show, Data)
+
+data ProjectsController
+    = ProjectsAction
+    | NewProjectAction
+    | CreateProjectAction
+    deriving (Eq, Show, Data)
+
+instance CanSelect ProjectType where
+    type SelectValue ProjectType = ProjectType
+    selectValue value = value
+    selectLabel value = case value of
+        ProjectTypeNotStarted -> "Not started"
+        ProjectTypeOngoing -> "Ongoing"
+        ProjectTypeFinished -> "Finished"
