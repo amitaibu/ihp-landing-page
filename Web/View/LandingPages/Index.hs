@@ -32,7 +32,9 @@ instance View IndexView where
 
 renderLandingPage :: LandingPage -> Html
 renderLandingPage landingPage = [hsx|
-    {body}
+    <div id={landingPage.id}>
+        {body}
+    </div>
 |]
     where
         body =

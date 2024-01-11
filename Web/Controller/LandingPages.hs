@@ -93,9 +93,10 @@ instance Controller LandingPagesController where
                 Left landingPage -> render NewView { .. }
                 Right landingPage -> do
                     landingPage <- landingPage |> createRecord
+                    let landingPageId = landingPage.id
                     setSuccessMessage "LandingPage created"
-                    -- After we create the Landing page, we can start adding Paragraphs to it.
-                    redirectTo EditLandingPageAction { landingPageId = landingPage.id }
+                    -- Redirect back to the index page.
+                    redirectToUrl $ urlTo LandingPagesAction ++ "#" ++ show landingPageId
 
     action DeleteLandingPageAction { landingPageId } = do
         landingPage <- fetch landingPageId
