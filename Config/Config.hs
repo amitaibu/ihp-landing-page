@@ -9,6 +9,7 @@ import "cryptonite" Crypto.PubKey.RSA as RSA
 import Control.Exception (catch)
 import qualified Data.ByteString as BS
 import Web.JWT
+import IHP.EnvVar
 
 data RsaKeys = RsaKeys { publicKey :: RSA.PublicKey, privateKey :: RSA.PrivateKey }
 
@@ -21,9 +22,12 @@ config = do
     -- Static directory.
     initStaticDirStorage
 
+    jwtPrivateKeyPath <- envOrDefault "JWT_PRIVATE_KEY_PATH" "./Config/jwtRS256.key"
+    jwtPublicKeyPath <- envOrDefault "JWT_PUBLIC_KEY_PATH" "./Config/jwtRS256.key"
+
     -- Private and public keys to sign and verify image style URLs.
-    privateKeyContent <- liftIO $ readRsaKeyFromFile "./Config/jwtRS256.key"
-    publicKeyContent <- liftIO $ readRsaKeyFromFile "./Config/jwtRS256.key.pub"
+    privateKeyContent <- liftIO $ readRsaKeyFromFile jwtPrivateKeyPath
+    publicKeyContent <- liftIO $ readRsaKeyFromFile jwtPublicKeyPath
 
     case (readRsaSecret privateKeyContent, readRsaPublicKey publicKeyContent) of
         (Just privateKey, Just publicKey) -> option $ RsaKeys publicKey privateKey
