@@ -1,3 +1,4 @@
+CREATE TYPE project_type AS ENUM ('project_type_ongoing', 'project_type_not_started', 'project_type_finished');
 CREATE FUNCTION set_updated_at_to_now() RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = NOW();
@@ -5,7 +6,6 @@ BEGIN
 END;
 $$ language plpgsql;
 -- Your database schema. Use the Schema Designer at http://localhost:8001/ to add some tables.
-
 CREATE TABLE users (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     email TEXT NOT NULL,
@@ -13,7 +13,6 @@ CREATE TABLE users (
     locked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     failed_login_attempts INT DEFAULT 0 NOT NULL
 );
-
 CREATE TABLE landing_pages (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -40,6 +39,11 @@ CREATE TABLE paragraph_ctas (
 );
 CREATE INDEX paragraph_quotes_landing_page_id_index ON paragraph_quotes (landing_page_id);
 CREATE INDEX paragraph_ctas_landing_page_id_index ON paragraph_ctas (landing_page_id);
+CREATE TABLE projects (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
+    project_type project_type NOT NULL,
+    participants TEXT NOT NULL
+);
 ALTER TABLE paragraph_ctas ADD CONSTRAINT paragraph_ctas_ref_landing_page_id FOREIGN KEY (landing_page_id) REFERENCES landing_pages (id) ON DELETE NO ACTION;
 ALTER TABLE paragraph_ctas ADD CONSTRAINT paragraph_ctas_ref_ref_landing_page_id FOREIGN KEY (ref_landing_page_id) REFERENCES landing_pages (id) ON DELETE NO ACTION;
 ALTER TABLE paragraph_quotes ADD CONSTRAINT paragraph_quotes_ref_landing_page_id FOREIGN KEY (landing_page_id) REFERENCES landing_pages (id) ON DELETE NO ACTION;
