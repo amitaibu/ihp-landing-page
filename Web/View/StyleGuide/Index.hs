@@ -4,6 +4,7 @@ import Web.Element.Types
 import Web.View.Prelude
 
 import Web.Element.Cta
+import Web.Element.HeroImage
 import Web.Element.PageTitle
 import Web.Element.Quote
 
@@ -38,6 +39,7 @@ instance View IndexView where
                 [ renderTitleAndElementWideContainer "Page Title" pageTitle
                 , renderTitleAndElementNoContainer "CTA" cta
                 , renderTitleAndElementNoContainer "Quote" quote
+                , renderTitleAndElementNoContainer "Hero Image" heroImage
                 ]
                 |> mconcat
 
@@ -61,6 +63,18 @@ instance View IndexView where
                 , imageUrl = "/styleGuideImages/8f8827de-e5d4-4ee7-b0a3-abae36274338"
                 }
                 |> Web.Element.Quote.render
+
+            heroImage = RenderHeroImage
+                { title = "This is title"
+                , maybeSubtitle = "This is subtitle"
+                , imageUrl = "/styleGuideImages/8f8827de-e5d4-4ee7-b0a3-abae36274338"
+                , maybeButton = Just RenderButton
+                    { text = "Read more"
+                    , url = "/"
+                    , isPrimary = True
+                    }
+                }
+                |> Web.Element.HeroImage.render
 
 renderTitleAndElementNoContainer :: Text -> Html -> Html
 renderTitleAndElementNoContainer title element =

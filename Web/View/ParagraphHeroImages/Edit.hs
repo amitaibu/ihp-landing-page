@@ -1,9 +1,9 @@
-module Web.View.ParagraphQuotes.Edit where
+module Web.View.ParagraphHeroImages.Edit where
 import Web.View.Prelude
-import Web.View.ParagraphQuotes.Form
+import Web.View.ParagraphHeroImages.Form
 
 data EditView = EditView
-    { paragraphQuote :: ParagraphQuote
+    { paragraphHeroImage :: ParagraphHeroImage
     , formStatus :: FormStatus
     , landingPage :: LandingPage
     }
@@ -11,12 +11,12 @@ data EditView = EditView
 instance View EditView where
     html EditView { .. } = [hsx|
         {breadcrumb}
-        <h1>Edit ParagraphQuote</h1>
-        {renderForm paragraphQuote False formStatus}
+        <h1>Edit Paragraph Hero Image</h1>
+        {renderForm paragraphHeroImage False formStatus}
     |]
         where
             breadcrumb = renderBreadcrumb
                 [ breadcrumbText "Landing Page"
                 , breadcrumbLink (cs landingPage.title) (EditLandingPageAction landingPage.id)
-                , breadcrumbText "Edit Quote"
+                , breadcrumbText "Edit Hero Image"
                 ]

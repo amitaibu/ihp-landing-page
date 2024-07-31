@@ -7,12 +7,11 @@ import Web.Types
 
 instance AutoRoute ParagraphQuotesController
 
-
 instance AutoRoute ParagraphCtasController
 
+instance AutoRoute ParagraphHeroImagesController
 
 instance AutoRoute LandingPagesController
-
 
 instance AutoRoute ImageStyleController
 

@@ -12,6 +12,7 @@ import Web.Controller.ImageStyle
 import Web.Controller.LandingPages
 import Web.Controller.ParagraphCtas
 import Web.Controller.ParagraphQuotes
+import Web.Controller.ParagraphHeroImages
 
 import IHP.LoginSupport.Middleware
 import Web.Controller.Sessions
@@ -26,6 +27,7 @@ instance FrontController WebApplication where
         , parseRoute @LandingPagesController
         , parseRoute @ParagraphCtasController
         , parseRoute @ParagraphQuotesController
+        , parseRoute @ParagraphHeroImagesController
         , parseRoute @SessionsController
         ]
 

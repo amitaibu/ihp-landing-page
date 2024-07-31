@@ -16,7 +16,10 @@ fetchLandingPageWithRecords :: (?modelContext :: ModelContext) => Id LandingPage
 fetchLandingPageWithRecords landingPageId = do
 
     landingPage <- fetch landingPageId
+
     paragraphCtas <- fetch landingPage.paragraphCtasRefLandingPages
+
+    paragraphHeroImages <- fetch landingPage.paragraphHeroImages
 
     paragraphQuotes <- fetch landingPage.paragraphQuotes
 
@@ -27,6 +30,7 @@ getParagraphsCount landingPageId = do
     landingPageWithRecords <- fetchLandingPageWithRecords landingPageId
 
     pure $ length landingPageWithRecords.paragraphCtas
+                    + length landingPageWithRecords.paragraphHeroImages
                     + length landingPageWithRecords.paragraphQuotes
                     + 1
 

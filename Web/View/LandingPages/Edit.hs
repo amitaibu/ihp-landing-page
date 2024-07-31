@@ -16,7 +16,7 @@ data EditView = EditView
 instance View EditView where
     html EditView { .. } =
         [ header
-        , renderForm landingPage paragraphCtas paragraphQuotes formStatus
+        , renderForm landingPage paragraphCtas paragraphQuotes paragraphHeroImages formStatus
         ]
         |> mconcat
         |> wrapVerticalSpacing AlignNone
@@ -24,6 +24,7 @@ instance View EditView where
         where
             landingPage = landingPageWithRecords.landingPage
             paragraphCtas = landingPageWithRecords.paragraphCtas
+            paragraphHeroImages = landingPageWithRecords.paragraphHeroImages
             paragraphQuotes = landingPageWithRecords.paragraphQuotes
 
             breadcrumb = renderBreadcrumb
@@ -46,8 +47,8 @@ instance View EditView where
                 |> mconcat
                 |> wrapHorizontalSpacingTiny AlignBaseline
 
-renderForm :: LandingPage -> [ParagraphCta] -> [ParagraphQuote] -> FormStatus -> Html
-renderForm landingPage paragraphCtas paragraphQuotes formStatus = formFor landingPage body
+renderForm :: LandingPage -> [ParagraphCta] -> [ParagraphQuote] -> [ParagraphHeroImage] -> FormStatus -> Html
+renderForm landingPage paragraphCtas paragraphQuotes paragraphHeroImages formStatus = formFor landingPage body
     where
         body :: (?formContext :: FormContext LandingPage) => Html
         body = [hsx|
@@ -68,7 +69,7 @@ renderForm landingPage paragraphCtas paragraphQuotes formStatus = formFor landin
             [ addParagraphs
             , [hsx|
                     <ul class="js-sortable">
-                        {orderAndRenderParagraphs paragraphCtas paragraphQuotes}
+                        {orderAndRenderParagraphs paragraphCtas paragraphQuotes paragraphHeroImages}
                     </ul>
                 |]
             ]
@@ -86,13 +87,15 @@ renderForm landingPage paragraphCtas paragraphQuotes formStatus = formFor landin
         paragraphButtons =
             [   renderButtonAction (NewParagraphCtaAction landingPage.id) "New CTA"
             ,   renderButtonAction (NewParagraphQuoteAction landingPage.id) "New Quote"
+            ,   renderButtonAction (NewParagraphHeroImageAction landingPage.id) "New Hero Image"
             ]
                 |> mconcat
                 |> wrapHorizontalSpacing AlignCenter
 
-orderAndRenderParagraphs :: [ParagraphCta] -> [ParagraphQuote] -> Html
-orderAndRenderParagraphs paragraphCtas paragraphQuotes =
+orderAndRenderParagraphs :: [ParagraphCta] -> [ParagraphQuote] -> [ParagraphHeroImage] -> Html
+orderAndRenderParagraphs paragraphCtas paragraphQuotes paragraphHeroImages =
     ctas
+        ++ heroImages
         ++ quotes
         |> sortOn fst
         |> fmap snd
@@ -102,11 +105,12 @@ orderAndRenderParagraphs paragraphCtas paragraphQuotes =
         ctas = paragraphCtas
             |> fmap (\paragraph -> (paragraph.weight, paragraphTitleAndOps EditParagraphCtaAction DeleteParagraphCtaAction paragraph.id paragraph.title ("CTA" :: Text)))
 
+        heroImages = paragraphHeroImages
+            |> fmap (\paragraph -> (paragraph.weight, paragraphTitleAndOps EditParagraphHeroImageAction DeleteParagraphHeroImageAction paragraph.id paragraph.title ("Hero Image" :: Text)))
+
         quotes = paragraphQuotes
             |> fmap (\paragraph -> (paragraph.weight, paragraphTitleAndOps EditParagraphQuoteAction DeleteParagraphQuoteAction paragraph.id paragraph.subtitle ("Quote" :: Text)))
-
-
-
+            
         -- Show the paragraph title and the operations to perform on it.
         paragraphTitleAndOps :: (Show (PrimaryKey record), HasPath controller) => (Id' record -> controller) -> (Id' record -> controller) -> Id' record -> Text -> Text -> Html
         paragraphTitleAndOps editAction deleteAction id title type_  =
@@ -136,7 +140,7 @@ orderAndRenderParagraphs paragraphCtas paragraphQuotes =
 
         sortableHandle =
             if
-                length ctas + length quotes > 1
+                length ctas + length heroImages + length quotes > 1
             then
                 [hsx|
                     <div class="sortable-handle">

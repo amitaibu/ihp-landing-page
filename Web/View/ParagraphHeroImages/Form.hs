@@ -1,4 +1,4 @@
-module Web.View.ParagraphQuotes.Form where
+module Web.View.ParagraphHeroImages.Form where
 
 import Web.View.Prelude
 import Web.Element.Types
@@ -9,29 +9,27 @@ import Web.Element.SubmitButton
 That is, the image itself is required, but since we've already uploaded one,
 when editing, we don't require re-uploading the same image.
 -}
-renderForm :: ParagraphQuote -> Bool -> FormStatus -> Html
-renderForm paragraphQuote isImageRequired formStatus = formFor paragraphQuote [hsx|
+renderForm :: ParagraphHeroImage -> Bool -> FormStatus -> Html
+renderForm paragraphHeroImage isImageRequired formStatus = formFor paragraphHeroImage [hsx|
     {(hiddenField #landingPageId)}
     {(hiddenField #weight)}
-    {visibleForm paragraphQuote}
+    {visibleForm paragraphHeroImage}
     |]
     where
-        visibleForm :: (?formContext :: FormContext ParagraphQuote) => ParagraphQuote -> Html
-        visibleForm paragraphQuote =
+        visibleForm :: (?formContext :: FormContext ParagraphHeroImage) => ParagraphHeroImage -> Html
+        visibleForm paragraphHeroImage =
             [hsx|
-                {(textareaField #body) {required = True}}
-                {(textField #subtitle) {required = True}}
+                {(textField #title) {required = True}}
+                {(textField #subtitle)}
+                {(textField #link)}
 
                 <div class="flex flex-row">
                     {(fileField #imageUrl) {required = isImageRequired, additionalAttributes = [("accept", "image/*"), ("data-preview", "#imageUrlPreview")]}}
 
-                    <img id="imageUrlPreview" src={paragraphQuote.imageUrl} class="w-20 h-20" />
+                    <img id="imageUrlPreview" src={paragraphHeroImage.imageUrl} class="w-20 h-20" />
                 </div>
 
-                {renderSubmitButtonwithFormStatus (submitButton {label = "Save Quote"}) formStatus}
+                {renderSubmitButtonwithFormStatus (submitButton {label = "Save Hero Image"}) formStatus}
             |]
             |> wrapVerticalSpacing AlignNone
             |> wrapContainerWide
-
-
-

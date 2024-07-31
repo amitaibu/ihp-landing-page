@@ -332,6 +332,7 @@ wrapTextFontWeight fontweight element =
             case fontweight of
                 FontWeightLight  -> "font-light"
                 FontWeightNormal -> "font-normal"
+                FontWeightMedium -> "font-medium"
                 FontWeightBold   -> "font-bold"
 
 wrapHeaderTag :: Int -> Html -> Html

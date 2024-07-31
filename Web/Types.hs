@@ -17,6 +17,7 @@ data LandingPageWithRecords = LandingPageWithRecords
     { landingPage :: !LandingPage
     , paragraphCtas :: ![ParagraphCta]
     , paragraphQuotes :: ![ParagraphQuote]
+    , paragraphHeroImages :: ![ParagraphHeroImage]
     } deriving (Show)
 
 {-| With the `FormStatus` we can show a message to the user after submitting a form,
@@ -62,6 +63,14 @@ data ParagraphQuotesController
     | EditParagraphQuoteAction { paragraphQuoteId :: !(Id ParagraphQuote) }
     | UpdateParagraphQuoteAction { paragraphQuoteId :: !(Id ParagraphQuote) }
     | DeleteParagraphQuoteAction { paragraphQuoteId :: !(Id ParagraphQuote) }
+    deriving (Eq, Show, Data)
+
+data ParagraphHeroImagesController
+    = NewParagraphHeroImageAction { landingPageId :: !(Id LandingPage) }
+    | CreateParagraphHeroImageAction
+    | EditParagraphHeroImageAction { paragraphHeroImageId :: !(Id ParagraphHeroImage) }
+    | UpdateParagraphHeroImageAction { paragraphHeroImageId :: !(Id ParagraphHeroImage) }
+    | DeleteParagraphHeroImageAction { paragraphHeroImageId :: !(Id ParagraphHeroImage) }
     deriving (Eq, Show, Data)
 
 
