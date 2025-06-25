@@ -9,7 +9,8 @@ import Web.View.LandingPages.Show
 instance Controller LandingPagesController where
     action LandingPagesAction = do
         landingPages <- query @LandingPage |> fetch
-        render IndexView { .. }
+        redirectToUrl "https://github.com/digitallyinduced/ihp?query=1#hash=2"
+        -- render IndexView { .. }
 
     action NewLandingPageAction = do
         let landingPage = newRecord
