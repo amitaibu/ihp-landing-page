@@ -15,6 +15,7 @@ instance Controller ParagraphCtasController where
 
         -- Get all landing pages, so we can select the one we want to link to.
         landingPages <- query @LandingPage |> fetch
+        landingPage <- fetch paragraphCta.landingPageId
 
         render NewView { .. }
 
@@ -23,6 +24,7 @@ instance Controller ParagraphCtasController where
 
         -- Get all landing pages, so we can select the one we want to link to.
         landingPages <- query @LandingPage |> fetch
+        landingPage <- fetch paragraphCta.landingPageId
 
         render EditView { .. }
 
@@ -33,6 +35,7 @@ instance Controller ParagraphCtasController where
             |> ifValid \case
                 Left paragraphCta -> do
                     landingPages <- query @LandingPage |> fetch
+                    landingPage <- fetch paragraphCta.landingPageId
                     render EditView { .. }
                 Right paragraphCta -> do
                     paragraphCta <- paragraphCta |> updateRecord
@@ -46,6 +49,7 @@ instance Controller ParagraphCtasController where
             |> ifValid \case
                 Left paragraphCta -> do
                     landingPages <- query @LandingPage |> fetch
+                    landingPage <- fetch paragraphCta.landingPageId
                     render NewView { .. }
                 Right paragraphCta -> do
                     paragraphCta <- paragraphCta |> createRecord

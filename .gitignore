@@ -25,6 +25,7 @@ static/app.css
 
 static/articles
 static/paragraph_quotes
+static/paragraph_hero_images
 
 # @todo: Fix the creation of duplicates
 static/styleGuideImages/imageStyles

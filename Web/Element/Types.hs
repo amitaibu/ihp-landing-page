@@ -5,7 +5,7 @@ data Align = AlignNone | AlignStart | AlignCenter | AlignEnd | AlignBaseline der
 
 data Justify = JustifyStart | JustifyCenter | JustifyEnd | JustifyBetween deriving (Eq, Show)
 
-data FontWeight = FontWeightLight | FontWeightNormal | FontWeightBold deriving (Eq, Show)
+data FontWeight = FontWeightLight | FontWeightNormal | FontWeightMedium | FontWeightBold deriving (Eq, Show)
 
 data Color
     = ColorTransparent
@@ -58,6 +58,13 @@ data RenderQuote = RenderQuote
     { body     :: Text
     , subtitle :: Text
     , imageUrl :: Text
+    }
+
+data RenderHeroImage = RenderHeroImage
+    { title         :: Text
+    , maybeSubtitle :: Maybe Text
+    , imageUrl      :: Text
+    , maybeButton   :: Maybe RenderButton
     }
 
 

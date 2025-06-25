@@ -2,6 +2,7 @@ module Web.View.LandingPages.Show where
 
 import Web.Element.Cta
 import Web.Element.ElementWrap
+import Web.Element.HeroImage
 import Web.Element.Link
 import Web.Element.Types
 import Web.Element.Quote
@@ -43,7 +44,7 @@ instance View ShowView where
 
 orderAndRenderParagraphs :: (?context::ControllerContext) => LandingPageWithRecords -> Html
 orderAndRenderParagraphs landingPageWithRecords =
-    ctas ++ quotes
+    ctas ++ heroImages ++ quotes
         -- Order by weight.
         |> sortOn fst
         |> fmap snd
@@ -54,6 +55,13 @@ orderAndRenderParagraphs landingPageWithRecords =
             |> fmap (\paragraph ->
                 ( paragraph.weight
                 , renderParagraphCta paragraph
+                )
+            )
+
+        heroImages = landingPageWithRecords.paragraphHeroImages
+            |> fmap (\paragraph ->
+                ( paragraph.weight
+                , renderParagraphHeroImage paragraph
                 )
             )
 
@@ -85,3 +93,21 @@ renderParagraphQuote paragraphQuote =
         , imageUrl = paragraphQuote.imageUrl |> fromMaybe ""
         }
         |> Web.Element.Quote.render
+
+renderParagraphHeroImage :: ParagraphHeroImage -> Html
+renderParagraphHeroImage paragraphHeroImage =
+    RenderHeroImage
+        { title = paragraphHeroImage.title
+        , maybeSubtitle = paragraphHeroImage.subtitle
+        , imageUrl = paragraphHeroImage.imageUrl |> fromMaybe ""
+        , maybeButton = maybeButton
+        }
+        |> Web.Element.HeroImage.render
+        where
+            maybeButton = case paragraphHeroImage.link of
+                Just link | not (null link) -> Just $ RenderButton
+                    { text = "Read More"
+                    , url = link
+                    , isPrimary = True
+                    }
+                _ -> Nothing
