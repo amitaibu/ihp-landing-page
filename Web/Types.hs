@@ -46,6 +46,9 @@ data LandingPagesController
     | EditLandingPageAction { landingPageId :: !(Id LandingPage) }
     | UpdateLandingPageAction { landingPageId :: !(Id LandingPage) }
     | DeleteLandingPageAction { landingPageId :: !(Id LandingPage) }
+    -- Order of paragraphs, and update of it.
+    | ShowOrderLandingPageParagraphsAction { landingPageId :: !(Id LandingPage) }
+    | UpdateOrderLandingPageParagraphsAction { landingPageId :: !(Id LandingPage) }
     deriving (Eq, Show, Data)
 
 data ParagraphCtasController
@@ -80,6 +83,7 @@ data SessionsController
     | CreateSessionAction
     | DeleteSessionAction
     deriving (Eq, Show, Data)
+
 data UsersController
     = UsersAction
     | NewUserAction

@@ -16,15 +16,13 @@ data EditView = EditView
 instance View EditView where
     html EditView { .. } =
         [ header
-        , renderForm landingPage paragraphCtas paragraphQuotes formStatus
+        , renderForm landingPageWithRecords formStatus
         ]
         |> mconcat
         |> wrapVerticalSpacing AlignNone
         |> wrapContainerWide
         where
             landingPage = landingPageWithRecords.landingPage
-            paragraphCtas = landingPageWithRecords.paragraphCtas
-            paragraphQuotes = landingPageWithRecords.paragraphQuotes
 
             breadcrumb = renderBreadcrumb
                 [ breadcrumbLink "Landing Pages" LandingPagesAction
@@ -46,35 +44,32 @@ instance View EditView where
                 |> mconcat
                 |> wrapHorizontalSpacingTiny AlignBaseline
 
-renderForm :: LandingPage -> [ParagraphCta] -> [ParagraphQuote] -> FormStatus -> Html
-renderForm landingPage paragraphCtas paragraphQuotes formStatus = formFor landingPage body
+renderForm :: LandingPageWithRecords -> FormStatus -> Html
+renderForm landingPageWithRecords formStatus = formFor landingPage body
     where
+        landingPage = landingPageWithRecords.landingPage
+        paragraphCtas = landingPageWithRecords.paragraphCtas
+        paragraphQuotes = landingPageWithRecords.paragraphQuotes
+
         body :: (?formContext :: FormContext LandingPage) => Html
-        body = [hsx|
-            {(textField #title)}
+        body =
+            [ [hsx|{(textField #title)}|]
+            , paragraphs |> wrapHorizontalPadding |> wrapBorder RoundedCornerNone
 
-            <div class="border p-4">
-                {paragraphs}
-            </div>
-
-            { renderSubmitButtonwithFormStatus
+            , renderSubmitButtonWithFormStatus
                 (submitButton {label = "Save Landing page"})
                 formStatus
-            }
-        |]
+            ]
+            |> mconcat
             |> wrapVerticalSpacing AlignNone
 
         paragraphs =
             [ addParagraphs
-            , [hsx|
-                    <ul class="js-sortable">
-                        {orderAndRenderParagraphs paragraphCtas paragraphQuotes}
-                    </ul>
-                |]
+            , orderAndRenderParagraphs paragraphCtas paragraphQuotes |> wrapListOl
+            , reOrderLink
             ]
                 |> mconcat
                 |> wrapVerticalSpacing AlignNone
-
 
         addParagraphs =
             [   cs ("Paragraphs" :: Text) |> wrapHeaderTag 3
@@ -89,6 +84,16 @@ renderForm landingPage paragraphCtas paragraphQuotes formStatus = formFor landin
             ]
                 |> mconcat
                 |> wrapHorizontalSpacing AlignCenter
+
+        reOrderLink = if countParagraphs landingPageWithRecords > 1
+            then renderLinkAction (ShowOrderLandingPageParagraphsAction landingPage.id) "Re-Order"
+            else ""
+
+
+countParagraphs :: LandingPageWithRecords -> Int
+countParagraphs LandingPageWithRecords { paragraphCtas, paragraphQuotes } =
+    length paragraphCtas + length paragraphQuotes
+
 
 orderAndRenderParagraphs :: [ParagraphCta] -> [ParagraphQuote] -> Html
 orderAndRenderParagraphs paragraphCtas paragraphQuotes =
@@ -111,15 +116,11 @@ orderAndRenderParagraphs paragraphCtas paragraphQuotes =
         paragraphTitleAndOps :: (Show (PrimaryKey record), HasPath controller) => (Id' record -> controller) -> (Id' record -> controller) -> Id' record -> Text -> Text -> Html
         paragraphTitleAndOps editAction deleteAction id title type_  =
             [hsx|
-                <li>{body}</li>
+                <li class="">{body}</li>
             |]
             where
                 body =
                     [hsx|
-                        {sortableHandle}
-
-                        <input type="hidden" name="paragraphId" value={show id} />
-
                         {title} <span class="text-sm text-gray-600">({type_})</span>
                         {operations}
                     |]
@@ -134,18 +135,4 @@ orderAndRenderParagraphs paragraphCtas paragraphQuotes =
 
 
 
-        sortableHandle =
-            if
-                length ctas + length quotes > 1
-            then
-                [hsx|
-                    <div class="sortable-handle">
-                        <div class="sortable-handle">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-200 hover:text-gray-500">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
-                            </svg>
-                        </div>
-                    </div>
-                |]
-            else
-                mempty
+

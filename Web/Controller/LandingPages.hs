@@ -4,6 +4,7 @@ import Web.Controller.Prelude
 import Web.View.LandingPages.Index
 import Web.View.LandingPages.New
 import Web.View.LandingPages.Edit
+import Web.View.LandingPages.Order
 import Web.View.LandingPages.Show
 
 instance Controller LandingPagesController where
@@ -51,42 +52,6 @@ instance Controller LandingPagesController where
                 Right landingPage -> do
                     landingPage <- landingPage |> updateRecord
 
-                    -- After we update the Landing page, we can set the order of the paragraphs.
-                    let params = paramListOrNothing @UUID "paragraphId"
-
-                    case catMaybes params of
-                        [] -> do
-                            -- No paragraphs to update.
-                            pure ()
-
-                        uuids -> do
-                            -- We need to update the weight of the paragraphs,
-                            -- So load them.
-                            landingPageWithRecords <- fetchLandingPageWithRecords landingPageId
-
-                            -- Iterate over all paragraphs, and update the weight.
-                            forEach landingPageWithRecords.paragraphCtas updateParagraph
-                            forEach landingPageWithRecords.paragraphQuotes updateParagraph
-
-                            where
-                                updateParagraph :: forall record.
-                                        ( HasField "id" record (Id record)
-                                        , SetField "weight" record Int
-                                        , CanUpdate record
-                                        , PrimaryKey (GetTableName record) ~ UUID
-                                        , ?modelContext :: ModelContext
-                                        ) => record -> IO ()
-                                updateParagraph paragraph = do
-                                    let uuid :: UUID = unpackId paragraph.id
-                                    let weight = elemIndex uuid uuids |> fromMaybe 0
-
-                                    paragraph
-                                        |> set #weight weight
-                                        |> updateRecord
-
-
-                                    pure ()
-
                     setSuccessMessage "LandingPage updated"
                     setFormStatus FormStatusSuccess
                     redirectTo EditLandingPageAction { .. }
@@ -111,6 +76,51 @@ instance Controller LandingPagesController where
         deleteRecord landingPage
         setSuccessMessage "LandingPage deleted"
         redirectTo LandingPagesAction
+
+    action ShowOrderLandingPageParagraphsAction { .. } = do
+        landingPageWithRecords <- fetchLandingPageWithRecords landingPageId
+
+        render OrderParagraphsView { .. }
+
+    action UpdateOrderLandingPageParagraphsAction { .. } = do
+        landingPageWithRecords <- fetchLandingPageWithRecords landingPageId
+
+        let params = paramListOrNothing @UUID "paragraphId"
+
+        case catMaybes params of
+            [] -> do
+                -- No paragraphs to update.
+                pure ()
+
+            uuids -> do
+                -- We need to update the weight of the paragraphs,
+                -- So load them.
+                landingPageWithRecords <- fetchLandingPageWithRecords landingPageId
+
+                -- Iterate over all paragraphs, and update the weight.
+                forEach landingPageWithRecords.paragraphCtas updateParagraph
+                forEach landingPageWithRecords.paragraphQuotes updateParagraph
+
+                setSuccessMessage "Paragraphs updated"
+                redirectTo ShowOrderLandingPageParagraphsAction { .. }
+
+                where
+                    updateParagraph :: forall record.
+                            ( HasField "id" record (Id record)
+                            , SetField "weight" record Int
+                            , CanUpdate record
+                            , PrimaryKey (GetTableName record) ~ UUID
+                            , ?modelContext :: ModelContext
+                            ) => record -> IO ()
+                    updateParagraph paragraph = do
+                        let uuid :: UUID = unpackId paragraph.id
+                        let weight = elemIndex uuid uuids |> fromMaybe 0
+
+                        paragraph
+                            |> set #weight weight
+                            |> updateRecord
+
+                        pure ()
 
 buildLandingPage landingPage = landingPage
     |> fill @'["title"]

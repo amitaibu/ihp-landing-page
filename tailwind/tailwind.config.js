@@ -9,6 +9,7 @@ module.exports = {
     content: [
         "Web/Element/**/*.hs",
         "Web/View/**/*.hs",
+        "Application/Helper/Icons.hs",
     ],
     safelist: [
         // Add custom class names.

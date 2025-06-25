@@ -6,8 +6,8 @@ import Application.Helper.Icons
 import Web.Element.ElementWrap
 import Web.Element.Types
 
-renderSubmitButtonwithFormStatus :: SubmitButton -> FormStatus -> Html
-renderSubmitButtonwithFormStatus submitButton formStatus = [hsx|
+renderSubmitButtonWithFormStatus :: SubmitButton -> FormStatus -> Html
+renderSubmitButtonWithFormStatus submitButton formStatus = [hsx|
     {submitButton}
 
     {- We show only one of these messages -}
